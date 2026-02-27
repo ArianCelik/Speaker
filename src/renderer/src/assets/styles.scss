@@ -1,0 +1,107 @@
+@import "../../../../node_modules/bootstrap/scss/bootstrap";
+
+body, html {
+  background: #4B5264;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+#messagesDiv{
+  background-color: #4B5264;
+  overflow-y: scroll;
+}
+
+#messages > :first-child {
+  margin-top: auto;
+}
+
+#msgTime {
+  color: gray;
+  text-align: end;
+  align-items: end;
+  border: 2px solid red;
+}
+
+
+#dateLine{
+  color: rgb(82, 82, 82);
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+#dateLine::before,
+#dateLine::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid gray;
+}
+
+#dateLine:not(:empty)::before {
+  margin-right: .25em;
+}
+
+#dateLine:not(:empty)::after {
+  margin-left: .25em;
+}
+
+
+#userContainer{
+  margin-top: 5px;
+  margin-bottom: 0;
+  border-bottom: 2px solid green;
+}  
+
+
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: white;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+}
+
+/* Nachricht von mir: rechts bündig */
+.own-msg {
+  align-self: flex-end;
+}
+.own-msg .bubble {
+  background-color: #9195d6; /* WhatsApp-Grün */
+  border-radius: 15px 15px 0 15px;
+}
+
+/* Nachricht von anderen: links bündig */
+.other-msg {
+  align-self: flex-start;
+}
+.other-msg .bubble {
+  background-color: #4B5264;
+  border-radius: 15px 15px 15px 0;
+}
+
+.bubble {
+  padding: 8px 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.user-name {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 2px;
+  color: #bebebe;
+}
+
+.time {
+  font-size: 0.65rem;
+  color: #bebebe;
+  margin-left: 8px;
+}
