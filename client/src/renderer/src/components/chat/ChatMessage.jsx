@@ -7,27 +7,31 @@ export default function ChatMessage({ messages }){
 	const [editingId, setEditingId] = useState(null);
 	const [editText, setEditText] = useState("");
 
+	//TODO: Fix the edit message function
 	const saveEdit = (id) => {
 		const payload = {
 			type: "edit_message",
 			id: id,
 			newText: editText
 		};
-		socket.send(JSON.stringify(payload));
 		setEditingId(null); // Edit-Mode schließen
 	};
 
 	//TODO: Implement message encryption and decryption
 	const processedMessages = useMemo(() => {
+		lastDay.current = "";
+		lastUser.current = "";
+		lastMinute.current = 0;
+
 		return messages.map((msg) => {
-			const parts = msg.timestamp.split(" ");
+			const timestamp_parts = msg.timestamp.split(" ");
 			
 			const time = {
-				day: parts[2],
-				month: parts[1],
-				year: parts[3],
-				hour: parts[4].split(":")[0],
-				minute: parts[4].split(":")[1]
+				day: timestamp_parts[2],
+				month: timestamp_parts[1],
+				year: timestamp_parts[3],
+				hour: timestamp_parts[4].split(":")[0],
+				minute: timestamp_parts[4].split(":")[1]
 			};
 
 			// Datums-Trenner Logik
@@ -45,11 +49,11 @@ export default function ChatMessage({ messages }){
 			return { ...msg, time, showDateLine, showUser };
 		});
 	}, [messages]);
-
+	
 	return (
 		<>
 			{processedMessages.map((message) => (
-				<div className="message-row">
+				<div className="message-row" key={message.id}>
 					{message.showDateLine && (
 						<div id="dateLine">
 							<small>{message.time.day} {message.time.month}. {message.time.year}</small>
@@ -100,23 +104,6 @@ export default function ChatMessage({ messages }){
 					</div>
 				</div>
 			))}
-			{/*processedMessages.map((message) => (
-				<React.Fragment key={message.id}>
-					{message.showDateLine && (
-						<tr>
-							<td className="px-0" colSpan={12}>
-								<div id="dateLine">
-									<small>{message.time.day} {message.time.month}. {message.time.year}</small>
-								</div>
-							</td>
-						</tr>
-					)}
-					<tr>
-						<td>{message.showUser ? message.user + ": " : ""}</td>
-						<td>{message.text} <small id="msgTime">{message.time.hour}:{message.time.minute}</small></td>
-					</tr>
-				</React.Fragment>
-			))*/}
 		</>
 	)
 }

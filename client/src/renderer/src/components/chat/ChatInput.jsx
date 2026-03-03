@@ -10,13 +10,14 @@ export default function ChatInput({ addMessage }){
 		addMessage(input);
 		
 		setInput("");
+		
 	}
 	
 
 	return (
 		<>
 			<form onSubmit={sendMessage} >
-				<div className="input-group" id="input-area">
+				<div className="input-group">
 					{/*<input class="form-control" type="file" id="formFileDisabled"/>*/}
 					<input 
 						className="form-control"
@@ -24,8 +25,9 @@ export default function ChatInput({ addMessage }){
 						onChange={e => setInput(e.target.value)} 
 						type="text"
 						placeholder="Write a message..."
+						autoFocus={true}
 					/>
-					<button type="submit" id="sendBtn" className="btn btn-outline-secondary">Send</button>
+					<button type="submit" className="btn btn-primary">Send</button>
 				</div>
 			</form>
 		</>
