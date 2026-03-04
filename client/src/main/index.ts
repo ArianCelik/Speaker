@@ -1,10 +1,7 @@
 import { app, shell, BrowserWindow, Menu, Tray } from 'electron'
-import { spawn } from "child_process";
 import { join } from 'path'
-import kill from 'tree-kill';
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 
-let bunProcess: any;
 let mainWindow: BrowserWindow;    
 
 const createTray = () => {
@@ -12,7 +9,7 @@ const createTray = () => {
 	const contextMenu: Menu = Menu.buildFromTemplate([
 		{label: 'Close', type: 'normal', click: () => { app.quit(); }}
 	]);
-	tray.setToolTip('Speaks');
+	tray.setToolTip('Speaker');
 	tray.setContextMenu(contextMenu);
 }
 
@@ -55,17 +52,6 @@ app.whenReady().then(() => {
   createTray()
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('will-quit', () => {
-  if (bunProcess?.pid) {
-    kill(bunProcess.pid, 'SIGTERM', (err) => {
-      if (err) {
-        console.error('Fehler beim Killen:', err);
-      }
-    });
-    process.exit(0);
-  }
+  app.exit();
 });
-
