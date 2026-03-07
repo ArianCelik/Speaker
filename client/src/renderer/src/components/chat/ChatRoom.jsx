@@ -32,7 +32,7 @@ function ChatRoom(){
 
 	//Connect to the server
 	useEffect(() => {
-		const socket = io("https://localhost:3000");
+		const socket = io("http://localhost:3000");
 		setSocket(socket);
 		socket.on("receive", (data) => {
 			const response = JSON.parse(data);

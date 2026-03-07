@@ -23,6 +23,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
+    "@vitejs/plugin-basic-ssl": "^2.1.4",
     "bootstrap": "^5.3.8",
     "socket.io-client": "^4.8.3",
     "webrtc-adapter": "^9.0.4"

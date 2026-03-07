@@ -1,29 +1,22 @@
+//import clientPromise from './db.js';
+
 const fs = require('fs');
-const https = require('https');
+const http = require('http');
 const express = require('express');
 const app = express();
 const socketio = require('socket.io');
-const mongoose = require('mongoose');
 
-const cert = fs.readFileSync('./certs/localhost.pem');
-const key = fs.readFileSync('./certs/localhost-key.pem');
-const secureExpressServer = https.createServer({key, cert}, app);
+//const cert = fs.readFileSync('./certs/localhost.pem');
+//const key = fs.readFileSync('./certs/localhost-key.pem');
+const server = http.Server(app);
 
-function connectToDatabase() {
-	let db_username = prompt('Enter database username: ');
-	let db_password = prompt('Enter database password: ');
-	mongoose.connect(`mongodb+srv://${db_username}:${db_password}@speaker.x6lt817.mongodb.net/Speaker`);
+//const client = await clientPromise;
+//const db = client.db("Speaker");
+//const collection = db.collection("messages");
 
-	const db = mongoose.connection;
-	db.on('connected', () => {
-		console.log('Database connected');
-	});
-	db.on('error', console.error.bind(console, 'connection error: '));
-}
-
-const io = socketio(secureExpressServer, { 
+const io = socketio(server, { 
 	cors: {
-		origin: 'https://localhost:5173',
+		origin: 'http://localhost:5173',
 		methods: ['GET', 'POST']
 	}
 });
@@ -32,6 +25,7 @@ io.on('connection', socket => {
 	console.log(socket.id + ': has connected');
 
 	socket.on('message', (data) => {
+		//collection.insertOne(data);
 		io.emit('receive', data);
 	});	
 
@@ -40,9 +34,7 @@ io.on('connection', socket => {
 	});
 });
 
-secureExpressServer.listen(3000, () => {
-	console.log(`Server is running on port ${secureExpressServer.address().port}`);
+server.listen(3000, () => {
+	console.log(`Server is running on port ${server.address().port}`);
 });
-
-connectToDatabase();
 //TODO: Implement rooms, token handeling
