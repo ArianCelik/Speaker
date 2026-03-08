@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from 'react-dom';
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
+import Card from "../card/Card";
 import adapter from 'webrtc-adapter';
 import io, { Socket } from 'socket.io-client';
 
@@ -27,23 +28,24 @@ function ChatRoom(){
 			text: input.valueOf(),
 			timestamp: new Date().toString()
 		};
-		socket.emit("message", JSON.stringify({type: "message", data: payload}));
+		socket.emit("message", payload);
 	}
 
 	//Connect to the server
 	useEffect(() => {
 		const socket = io("http://localhost:3000");
 		setSocket(socket);
+
 		socket.on("receive", (data) => {
-			const response = JSON.parse(data);
-			if (response.type === "history") {
-				const data = response.data.reverse();
-				setMessages(data);
-				id.current = data[data.length - 1].id;
-			} else {
-				setMessages(prev => {return [...prev, response.data]});
-				id.current++;
-			}
+			setMessages(prev => {return [...prev, data]});
+			id.current++;
+		});
+
+		socket.on("history", (history) => {
+			const data = history[0].messages;
+			setMessages(data);
+			id.current = data[data.length - 1].id;
+
 		});
 
 		return () => {
@@ -52,23 +54,17 @@ function ChatRoom(){
 	}, []);
 
 	return (
-		<>
-			<div className="card p-1 m-1">
-				<div className="card-body p-1 m-1">
-					<div id="messageContainer" ref={messageContainerRef}>
-						<ChatMessage messages={messages} />
-					</div>
+		<main>
+			<Card component={
+				<div id="messageContainer" ref={messageContainerRef}>
+					<ChatMessage messages={messages} />
 				</div>
-			</div>
+			}/>
 			{createPortal(
-				<div className="card p-1 m-1">
-					<div className="card-body p-1 m-1">
-						<ChatInput addMessage={addMessage} />
-					</div>
-				</div>,
+				<Card component={<ChatInput addMessage={addMessage} />}/>,
 				document.getElementById("input")
 			)}
-		</>	
+		</main>	
 	)
 }
 
