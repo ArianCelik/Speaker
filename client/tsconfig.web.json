@@ -5,7 +5,7 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts"
-  ],
+, "src/renderer/pages/LoginPage.jsx", "src/renderer/pages/RegisterPage.jsx", "src/renderer/pages/Home.jsx"  ],
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",

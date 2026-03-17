@@ -1,70 +1,67 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from 'react-dom';
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
 import Card from "../card/Card";
-import adapter from 'webrtc-adapter';
-import io, { Socket } from 'socket.io-client';
+import { useSocket } from '../context/socket/SocketContext';
+import { useAuth } from "../context/authentication/AuthProvider";
 
-function ChatRoom(){
+function ChatRoom() {
 	const [messages, setMessages] = useState([]);
-	const [socket, setSocket] = useState(null);
+	const { user } = useAuth();
+	const socket = useSocket();
 	
-	const id = useRef(0);
 	const messageContainerRef = useRef(null);
+	const id = useRef(0);
 
-	//Auto-scroll to the bottom of the chat
-	useEffect(() => {
-		if (messageContainerRef.current) {
-			messageContainerRef.current.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-		}
-	}, [messages]);
-
-	//Add a message to the chat
+	//Send message
 	function addMessage(input){
 		const payload = {
-			id: messages[messages.length-1] ? messages[messages.length-1].id+1 : 1,
-			user: "Me",
+			id: crypto.randomUUID(),
+			username: user.publicname,
 			text: input.valueOf(),
 			timestamp: new Date().toString()
 		};
-		socket.emit("message", payload);
+		const message = {chat_id: id.current, message: payload}
+		if (socket) socket.emit("privateChatMessage", message);
 	}
 
-	//Connect to the server
+	//Connect to the server and receive message + history from db
 	useEffect(() => {
-		const socket = io("http://localhost:3000");
-		setSocket(socket);
+		if (!socket) return;
 
-		socket.on("receive", (data) => {
+		socket.on("ReceivePrivateMessage", (data) => {
 			setMessages(prev => {return [...prev, data]});
-			id.current++;
 		});
 
-		socket.on("history", (history) => {
-			const data = history[0].messages;
-			setMessages(data);
-			id.current = data[data.length - 1].id;
-
+		socket.on("privateChatHistory", (history) => {
+			id.current = history.chat_id;
+			if (history.messages && history.messages.length > 0) {
+				const data = history.messages[0].messages;
+				setMessages(data);
+			}
 		});
 
 		return () => {
-			socket.close();
+			socket.off("ReceivePrivateMessage");
+			socket.off("privateChatHistory");
 		}
-	}, []);
+	}, [socket]);
+
+	const inputPortal = document.getElementById("input");
 
 	return (
-		<main>
+		<>
 			<Card component={
 				<div id="messageContainer" ref={messageContainerRef}>
 					<ChatMessage messages={messages} />
 				</div>
 			}/>
-			{createPortal(
+			{inputPortal && createPortal(
 				<Card component={<ChatInput addMessage={addMessage} />}/>,
-				document.getElementById("input")
+				inputPortal
 			)}
-		</main>	
+		</>	
 	)
 }
 

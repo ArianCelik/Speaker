@@ -7,5 +7,23 @@
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "cSpell.words": [
+    "ccircle",
+    "Celik",
+    "cpath",
+    "csvg",
+    "dropend",
+    "dropstart",
+    "dropup",
+    "firstname",
+    "friendid",
+    "hashedpw",
+    "hstack",
+    "jwtsecret",
+    "lastname",
+    "publicname",
+    "vstack",
+    "zindex"
+  ]
 }

@@ -11992,7 +11992,38 @@ body, html {
 
 #header .card{
   height: 40px;
-  background: red
+  background: rgb(133, 134, 138)
+}
+
+.header-container{
+  display: flex;
+}
+
+#home-button{
+  padding-left: 5px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#user-search input{
+  background-color: #4B5264;
+  border: 2px solid #393c46;
+  border-radius: 5px;
+  outline: none;
+}
+
+#user-search{
+  padding-left: 10px;
+  padding-right:  10px;
+  align-self: center;
+}
+
+#logout{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  justify-self: end;
 }
 
 .layout{
@@ -12007,9 +12038,9 @@ body, html {
 }
 
 #users .card{
-  height: calc(100vh - 50px);
+  height: calc(100vh - 52px);
   width: 200px;
-  background: green;
+  background: rgb(133, 134, 138);
 }
 
 
@@ -12020,8 +12051,9 @@ main{
 
 #messageContainer{
   height: 100vh;
-  max-height: calc(100vh - 145px);
-  flex-direction: column;
+  max-height: calc(100vh - 146px);
+  display: flex;
+  flex-direction: column-reverse;
   overflow-y: scroll;
 }
 
@@ -12035,6 +12067,11 @@ input[type="text"], textarea{
 
 }
 
+#home{
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 78px);
+}
 
 
 #input .card{
@@ -12075,4 +12112,42 @@ input[type="text"], textarea{
   margin-bottom: 2px;
   color: #700a0a;
 }
+
+#loginPage{
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#loginPage .card{
+  width: 400px;
+  box-shadow: 5px 5px 10px #2b2b2b;
+}
+
+a{
+  color: #700a0a;
+}
+
+a:hover{
+  color: rgb(132, 32, 41);
+}
+
+#registerPage{  
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 40p 40px 40px 40px;
+}
+
+#registerPage .card{
+  width: 400px;
+  box-shadow: 5px 5px 10px #2b2b2b;
+  padding: 40p 40px 40px 40px;
+}
+
+/*TODO: Switch to Tailwind CSS*/
 /*# sourceMappingURL=styles.css.map */

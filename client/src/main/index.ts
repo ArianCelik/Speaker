@@ -6,8 +6,6 @@ if (!app.isPackaged) {
   app.commandLine.appendSwitch('ignore-certificate-errors')
 }
 
-let mainWindow: BrowserWindow;    
-
 const createTray = () => {
 	const tray: Tray = new Tray(join(__dirname, '../../resources/headset.png'));
 	const contextMenu: Menu = Menu.buildFromTemplate([
@@ -18,45 +16,45 @@ const createTray = () => {
 }
 
 function createWindow(): void {
-  mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 800,
-    show: false,
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+	const mainWindow = new BrowserWindow({
+		width: 1400,
+		height: 800,
+		show: false,
+		autoHideMenuBar: true,
+		webPreferences: {
+			preload: join(__dirname, '../preload/index.js'),
+			contextIsolation: true,
+			nodeIntegration: false
+		}
+	})
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+	mainWindow.on('ready-to-show', () => {
+		mainWindow.show()
+	})
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+	mainWindow.webContents.setWindowOpenHandler((details) => {
+		shell.openExternal(details.url)
+		return { action: 'deny' }
+	})
 
-  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`)
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
+	if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
+		mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`)
+	} else {
+		mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+	}
 }
 
 app.whenReady().then(() => {
+	electronApp.setAppUserModelId('com.electron')
 
-  electronApp.setAppUserModelId('com.electron')
+	app.on('browser-window-created', (_, window) => {
+		optimizer.watchWindowShortcuts(window)
+	})
 
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
-
-  createWindow()
-  createTray()
+	createWindow()
+	createTray()
 })
 
 app.on('will-quit', () => {
-  app.exit();
+  	app.exit();
 });

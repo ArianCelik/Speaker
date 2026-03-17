@@ -14,7 +14,7 @@ export default function ChatMessage({ messages }){
 			id: id,
 			newText: editText
 		};
-		setEditingId(null); // Edit-Mode schließen
+		setEditingId(null);
 	};
 
 	//TODO: Implement message encryption and decryption
@@ -34,20 +34,18 @@ export default function ChatMessage({ messages }){
 				minute: timestamp_parts[4].split(":")[1]
 			};
 
-			// Datums-Trenner Logik
 			const showDateLine = lastDay.current !== time.day;
 			if (showDateLine) lastDay.current = time.day;
 
-			// User-Namen Logik
 			let showUser = false;
-			if (lastUser.current !== msg.user || Math.abs(lastMinute.current - Number(time.minute)) >= 5 || showDateLine) {
+			if (lastUser.current !== msg.username || Math.abs(lastMinute.current - Number(time.minute)) >= 5 || showDateLine) {
 				showUser = true;
-				lastUser.current = msg.user;
+				lastUser.current = msg.username;
 				lastMinute.current = Number(time.minute);
 			}
 
 			return { ...msg, time, showDateLine, showUser };
-		});
+		}).reverse();
 	}, [messages]);
 	
 	return (
@@ -64,7 +62,7 @@ export default function ChatMessage({ messages }){
 					<div className="message-content" style={{ width: '100%' }}>
 					{message.showUser && (
 						<div className="user-info">
-							<span className="username">{message.user + ": "}</span>
+							<span className="username">{message.username + ": "}</span>
 							<span className="timestamp">{message.time.hour}:{message.time.minute}</span>
 						</div>
 					)}
@@ -86,8 +84,8 @@ export default function ChatMessage({ messages }){
 							autoFocus
 						/>
 							<small style={{ color: '#949ba4' }}>
-								Escape zum <span style={{ color: '#00a8fc', cursor: 'pointer' }} onClick={() => setEditingId(null)}>Abbrechen</span> • 
-								Enter zum <span style={{ color: '#00a8fc', cursor: 'pointer' }} onClick={() => saveEdit(message.id)}>Speichern</span>
+								Escape to <span style={{ color: '#00a8fc', cursor: 'pointer' }} onClick={() => setEditingId(null)}>Close</span> • 
+								Enter to <span style={{ color: '#00a8fc', cursor: 'pointer' }} onClick={() => saveEdit(message.id)}>Save</span>
 							</small>
 						</div>
 					) : (
@@ -98,7 +96,7 @@ export default function ChatMessage({ messages }){
 							<div style={{paddingLeft: '15px' }}>
 								{message.text}
 							</div>
-							{message.is_edited && <span style={{ fontSize: '0.6rem', color: '#949ba4', marginLeft: '4px' }}>(bearbeitet)</span>}
+							{message.is_edited && <span style={{ fontSize: '0.6rem', color: '#949ba4', marginLeft: '4px' }}>(edited)</span>}
 						</div>
 					)}
 					</div>
