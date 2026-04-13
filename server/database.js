@@ -42,15 +42,32 @@ export class DB {
 		console.log('\x1b[32m%s\x1b[0m', "Chat created.")
 	}
 
-	async createGroupChat(chat_id){
+	async createGroupChat(group_name, users){
 		const chatCollection = await this.db.collection("Group_Chats");
 		const chat = {
-			chat_id: chat_id,
+			chat_id: crypto.randomUUID(),
 			timestamp: new Date().toString(),
-			messages: []
+			messages: [],
+			group_name: group_name,
+			users: users
 		}
 		const result = await chatCollection.insertOne(chat)
+		await this.addToGroupChat(chat, users);
 		console.log('\x1b[32m%s\x1b[0m', "Chat created.")
+	}
+
+	async addToGroupChat(group_chat, users){
+		const userCollection = await this.db.collection("Users");
+		const group_chat_data = {
+			chat_id: group_chat.chat_id,
+			group_name: group_chat.group_name,
+			timestamp: group_chat.timestamp
+		}
+		for (const user of users) {
+			const user_data = await userCollection.findOne({ user_id: user.user_id });
+			user_data.chats.group_chats.push(group_chat_data);
+			await userCollection.updateOne({ user_id: user_data.user_id }, { $set: { chats: user_data.chats } });
+		}
 	}
 
 	async getUser(user_id) {
@@ -71,10 +88,12 @@ export class DB {
 			email: email,
 			password: hashedpw,
 			timestamp: new Date().toString(),
-			friends: []
+			chats: {
+				private_chats: [],
+				group_chats: []
+			}
 		};
-		const result = await userCollection.insertOne(user);
-		console.log('\x1b[32m%s\x1b[0m', `User created with id: ${result.insertedId}`);
+		await userCollection.insertOne(user);
 	}
 
 	async addFriend(my_user_id, friend_user_id) {
@@ -92,12 +111,14 @@ export class DB {
 			{ user_id: friend_user_id },
 			{ 
 				$push: { 
-					friends: { 
-						user_id: me.user_id, 
-						publicname: me.publicname, 
-						nickname: me.publicname, 
-						chat_id: chat_id, 
-						timestamp: new Date().toString() 
+					chats: {
+						private_chats: {
+							user_id: me.user_id, 
+							publicname: me.publicname, 
+							nickname: me.publicname, 
+							chat_id: chat_id, 
+							timestamp: new Date().toString() 
+						} 
 					} 
 				} 
 			}
@@ -127,7 +148,7 @@ export class DB {
 		const userCollection = await this.db.collection("Users");
 		const user = await userCollection.findOne({ user_id });
 		console.log('\x1b[32m%s\x1b[0m', `User ${user.username} friends fetched.`);
-		return user.friends;
+		return user.chats.private_chats;
 	}
 
 	async login(email, password){
@@ -143,7 +164,6 @@ export class DB {
 			console.error("Invalid password");
 			return null;
 		}
-		console.log('\x1b[32m%s\x1b[0m', `User ${user.username} logged in`);
 		const { password: _, ...safeUser } = user;
 		return safeUser;
 	}

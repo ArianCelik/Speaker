@@ -12149,5 +12149,25 @@ a:hover{
   padding: 40p 40px 40px 40px;
 }
 
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.custom-modal-content .card{
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 5px 5px 10px #2b2b2b;
+  position: relative;
+}
+
 /*TODO: Switch to Tailwind CSS*/
 /*# sourceMappingURL=styles.css.map */

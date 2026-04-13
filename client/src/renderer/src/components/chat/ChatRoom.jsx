@@ -11,6 +11,7 @@ function ChatRoom() {
 	const { user } = useAuth();
 	const socket = useSocket();
 	
+	
 	const messageContainerRef = useRef(null);
 	const id = useRef(0);
 
@@ -24,6 +25,7 @@ function ChatRoom() {
 		};
 		const message = {chat_id: id.current, message: payload}
 		if (socket) socket.emit("privateChatMessage", message);
+		user.chats.private_chats.find(chat => chat.chat_id === id.current).last_chatted = new Date().getTime();
 	}
 
 	//Connect to the server and receive message + history from db

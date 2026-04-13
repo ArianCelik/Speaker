@@ -1,5 +1,5 @@
 import Header from "../src/components/layout/Header";
-import FriendsList from "../src/components/layout/FriendsList";
+import ChatList from "../src/components/layout/ChatList";
 
 export default function Home({main}){
 	
@@ -13,7 +13,7 @@ export default function Home({main}){
 				</div>
 			</div>
 			<div className='layout'>
-				<nav id="users"><FriendsList/></nav>
+				<nav id="users"><ChatList/></nav>
 				<main>
 					{main}
 				</main>

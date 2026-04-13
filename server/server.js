@@ -80,6 +80,7 @@ app.post("/auth/login", async (req, res) => {
 		path: "/auth/refresh",
 	});
 
+	console.log('\x1b[32m%s\x1b[0m', `User ${user.publicname} logged in`);
 	res.json({ user, accessToken });
 });
 
@@ -100,6 +101,7 @@ app.post("/auth/register", async (req, res) => {
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 			path: "/auth/refresh",
 		});
+		console.log('\x1b[32m%s\x1b[0m', `User ${user.publicname} registered`);
 		res.status(201).json({ user, accessToken });
 	} catch (err) {
 		console.error(err);
@@ -118,6 +120,7 @@ app.post("/auth/refresh", async (req, res) => {
 			user_id: payload.user_id,
 			email:   payload.email,
 		});
+		console.log('\x1b[32m%s\x1b[0m', `Access Token refreshed for user ${payload.email}`);
 		res.json({ accessToken });
 	} catch {
 		res.clearCookie("refresh_token", { path: "/auth/refresh" });
@@ -136,8 +139,9 @@ app.get("/auth/me", async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
 		}
-
+		console.log(user);
 		const { password: _, ...safeUser } = user;
+		console.log('\x1b[32m%s\x1b[0m', `Access Token verified for user ${user.publicname}`);
 		res.json({ user: safeUser });
 	} catch {
 		res.status(401).json({ error: "Access Token invalid or expired" });
@@ -147,6 +151,7 @@ app.get("/auth/me", async (req, res) => {
 app.post("/auth/logout", (req, res) => {
 	res.clearCookie("refresh_token", { path: "/auth/refresh" });
 	res.json({ message: "Logged out" });
+	console.log('\x1b[31m%s\x1b[0m', `User logged out`);
 });
 
 io.use(async (socket, next) => {
@@ -176,6 +181,10 @@ io.on('connection', async socket => {
 	socket.on("addFriend", async (data) => {
 		await db.addFriend(socket.user.user_id, data.friend_id);
 		socket.emit("friends", await db.getFriends(socket.user.user_id));
+	});
+
+	socket.on("createGroup", async (data) => {
+		await db.createGroupChat(data.groupName, data.groupUsers);
 	});
 
 	socket.on("getPrivateChatHistory", async (data) => {

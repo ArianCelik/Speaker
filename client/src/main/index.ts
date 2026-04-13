@@ -1,6 +1,9 @@
 import { app, shell, BrowserWindow, Menu, Tray } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
+import { ipcMain } from 'electron'
+
+let status = 0;
 
 if (!app.isPackaged) {
   app.commandLine.appendSwitch('ignore-certificate-errors')
@@ -23,13 +26,14 @@ function createWindow(): void {
 		autoHideMenuBar: true,
 		webPreferences: {
 			preload: join(__dirname, '../preload/index.js'),
+			sandbox: false,
 			contextIsolation: true,
 			nodeIntegration: false
 		}
 	})
 
 	mainWindow.on('ready-to-show', () => {
-		mainWindow.show()
+		mainWindow!.show()
 	})
 
 	mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -42,6 +46,24 @@ function createWindow(): void {
 	} else {
 		mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
 	}
+
+	mainWindow.on("close", function (e) {
+		if(status == 0){
+			if(mainWindow){
+				console.log("Closing app...");
+				e.preventDefault();
+				mainWindow.webContents.send("app-close");
+			}
+		}
+	})
+
+	ipcMain.on("closed", () => {
+		status = 1;
+		mainWindow.close();
+		if(process.platform !== 'darwin'){
+			app.quit();
+		}
+	})
 }
 
 app.whenReady().then(() => {
@@ -54,7 +76,3 @@ app.whenReady().then(() => {
 	createWindow()
 	createTray()
 })
-
-app.on('will-quit', () => {
-  	app.exit();
-});

@@ -2,7 +2,7 @@
 
 Speaker is a modern messaging application built with Electron, React, and TypeScript. It offers real-time communication with a focus on security and ease of use.
 
-## 🚀 Technology Stack
+## Technology Stack
 
 ### Client
 - **Framework:** Electron + React + TypeScript
@@ -18,14 +18,14 @@ Speaker is a modern messaging application built with Electron, React, and TypeSc
 - **Real-time:** Socket.io
 - **Security:** bcrypt, jose (JWT)
 
-## ✨ Features
+## Features
 
 - **Real-time Messaging:** Instant sending and receiving of messages via WebSockets.
 - **User Management:** Secure registration and login with JWT-based access and refresh tokens.
 - **Friend System:** Add friends and manage private chat histories.
 - **Emoji Support:** Integrated emoji picker for interactive chats.
 
-## 📁 Project Structure
+## Project Structure
 
 ```Structure
 Speaker/
@@ -39,7 +39,7 @@ Speaker/
 └── README.md         # This file
 ```
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 Make sure that [Bun](https://bun.sh/) is installed on your system.
 
@@ -63,7 +63,7 @@ cd Speaker
 1. Switch to the client directory: `cd client`
 2. Install dependencies: `bun install`
 
-## 🏃 Running the Application
+## Running the Application
 
 ### Start Server
 ```bash
@@ -77,7 +77,7 @@ cd client
 bun run dev
 ```
 
-## 📦 Build Instructions
+## Build Instructions
 
 To build the application for different platforms:
 
@@ -93,7 +93,7 @@ bun run build:mac
 bun run build:linux
 ```
 
-## 🔮 Future Implementations
+## Future Implementations
 
 - **New Name:** Think of a better name lol.
 - **Security:** End-to-end encrypted communication.

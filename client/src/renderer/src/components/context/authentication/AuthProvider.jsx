@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		const interceptor = api.interceptors.response.use((res) => res, async (err) => {
 			const original = err.config;
-			// 401 und KEIN Refresh-Request? Dann versuchen wir zu refreshen.
 			if (err.response?.status === 401 && !original._retry && original.url !== "/auth/refresh") {
 				original._retry = true;
 				try {
